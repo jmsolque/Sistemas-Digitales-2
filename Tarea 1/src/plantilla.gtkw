@@ -1,0 +1,89 @@
+[*]
+[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
+[*] Sun Oct 12 17:31:08 2025
+[*]
+[dumpfile] "/home/brandon/UCR/Digitales2/Tarea3/resultados.vcd"
+[dumpfile_mtime] "Sun Oct 12 17:27:03 2025"
+[dumpfile_size] 133285
+[savefile] "/home/brandon/UCR/Digitales2/Tarea3/plantilla.gtkw"
+[timestart] 0
+[size] 1854 1001
+[pos] -27 -24
+*-6.451708 23 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] cpu_tb.
+[sst_width] 278
+[signals_width] 303
+[sst_expanded] 1
+[sst_vpaned_height] 297
+@200
+-CPU
+@28
+cpu_tb.CPU.clk
+[color] 1
+cpu_tb.CPU.rst
+[color] 5
+cpu_tb.CPU.equal
+@23
+[color] 6
+cpu_tb.CPU.prog_addr[11:0]
+@28
+cpu_tb.CPU.ab_select
+@24
+[color] 2
+cpu_tb.CPU.a[7:0]
+[color] 3
+cpu_tb.CPU.b[7:0]
+@200
+-Entradas provenientes de la ROM
+@22
+cpu_tb.CPU.opcode[3:0]
+@28
+cpu_tb.CPU.ab_select
+@24
+cpu_tb.CPU.op_addr[7:0]
+@200
+-
+-Salidas hacia la RAM
+@24
+cpu_tb.CPU.mem_addr[11:0]
+@22
+cpu_tb.CPU.mem_data_in[7:0]
+@28
+cpu_tb.CPU.mem_control
+@200
+-
+-Entrada proveniente de la RAM
+@22
+cpu_tb.CPU.mem_data_out[7:0]
+@200
+-Estados
+@22
+cpu_tb.CPU.state[3:0]
+@200
+-
+-
+-
+-ROM
+@22
+cpu_tb.ROM.prog_addr[11:0]
+cpu_tb.ROM.opcode[3:0]
+@28
+cpu_tb.ROM.ab_select
+@24
+cpu_tb.ROM.op_addr[7:0]
+@28
+cpu_tb.ROM.request_rom
+@200
+-
+-
+-RAM
+@28
+cpu_tb.RAM.mem_control
+@24
+cpu_tb.RAM.mem_addr[11:0]
+cpu_tb.RAM.mem_data_in[7:0]
+cpu_tb.RAM.mem_data_out[7:0]
+@28
+cpu_tb.RAM.request_ram
+[pattern_trace] 1
+[pattern_trace] 0
