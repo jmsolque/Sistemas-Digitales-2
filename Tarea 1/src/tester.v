@@ -15,9 +15,15 @@ module tester (/*AUTOARG*/
               #20 reset = 0;
               #10 reset = 1;
 
+	      #950 reset = 0;
+	      #10 reset = 1; 
+
+	      #650 reset = 0;
+	      #10 reset = 1;
 
 
-              #2000 $finish;  //Termina la simulación a los 2000 segundos
+
+              #700 $finish;  //Termina la simulación a los 2000 segundos
             end
 
             always begin

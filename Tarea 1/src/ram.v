@@ -23,37 +23,38 @@ module ram (/*AUTOARG*/
         for (i = 0; i < 32; i = i + 1) memory[i] = 8'b0;  //Inicializar todo en 0
 
       //Mi carnet es C27645
-      memory[0] = 8'b00000111;  // 7
-      memory[1] = 8'b00000110;  // 6
-      memory[2] = 8'b00000100;  // 4
-      memory[3] = 8'b00000101;  // 5
-      memory[5] = 8'b00000000;  // 0   Para LOAD de prueba
-      memory[6] = 8'b00000011;  // 3
-      memory[10] = 8'b00001000; // 8
-      memory[15] = 8'b00000010; // 2
-      memory[20] = 8'b00001001; // 9
-      memory[25] = 8'b00000000; // 0
+      memory[0] = 8'd7;  // Primer dígito
+      memory[1] = 8'd6;  // Segundo dígito
+      memory[2] = 8'd4;  // Tercer dígito
+      memory[3] = 8'd5;  // Cuarto dígito 
+      memory[5]  = 8'd12; // Valor para LOAD A from 005
+      // Espacios en 0
+      memory[10] = 8'd13; // Valor para LOAD B from 010
+      memory[25] = 8'd25; // Valor para comparación EQUAL 
+      // Espacios en 0 hasta memory[31] 
     end
 
 
 
-    always @(posedge clock) begin
-      if (request_ram && reset) begin     //Solo si ambos son verdaderos
-        if (mem_control == read) begin
-          mem_data_in <= memory[mem_addr];
-        end
-        else if (mem_control == write) begin
-          memory[mem_addr] <= mem_data_out;
-          mem_data_in <= 8'b0;
+
+    always @(posedge clock) begin          //Logica para escribir en la memoria ram, se debe sincronizar con el clock
+	    if (request_ram && reset && mem_control == 1'b0) begin
+		    memory[mem_addr[5:0]] <= mem_data_out;  //Escribe lo que viene de mem_data_our en la direccion de memoria mem_addr 
+	    end
+    end
+
+
+    always @(*) begin     //Logica para leer de la memoria ram, no requiere sincronizar el clock
+      if (request_ram && reset && mem_control == 1'b1) begin     //Solo si ambos son verdaderos
+          mem_data_in = memory[mem_addr[5:0]];     //Lee con mem_data_in lo que esta en la direccion mem_addr
         end
         else begin
-          mem_data_in <= 8'b0;
-        end
-      end
-      else begin
-        mem_data_in <= 8'b0;
-      end
-  end
+		mem_data_in = 8'b0;
+	end
+    end
+
+
+
 
 endmodule
 

@@ -1,43 +1,12 @@
 # Makefile para simulación del CPU
 
-# Variables
-SIM = iverilog
-SIM_FLAGS = -o salida
-VVP = vvp
-WAVE = gtkwave
-VCD_FILE = resultados.vcd
+all:
+	yosys -s cpu.ys     # Genera el archivo con las compuertas que requiere el codigo 
+	iverilog -g2005-sv testbench.v    # Esto ejecuta iverilog para todos los .v que hay dentro del testbench
+	vvp a.out    # Ejecuta el a.out que se genera al ejecutar el testbench
+	gtkwave resultados.vcd plantilla.gtkw   # Abre automaticamente gtkwave con las senales de importancia para verificar el sistema 
 
-# Archivos fuente
-SOURCES = cpu.v tester_cpu.v testbench_cpu.v
-
-# Objetivo principal
-all: simular
-
-# Compilar y simular
-simular: compilar ejecutar
-
-# Compilar todos los módulos
-compilar:
-	$(SIM) $(SIM_FLAGS) $(SOURCES)
-
-# Ejecutar la simulación
-ejecutar:
-	$(VVP) salida
-
-# Ver formas de onda
-ver:
-	$(WAVE) $(VCD_FILE) plantilla.gtkw
-
-# Limpiar archivos generados
-clean:
-	rm -f salida $(VCD_FILE)
-
-# Ayuda
-help:
-	@echo "Comandos disponibles:"
-	@echo "  make compilar  - Compilar los módulos Verilog"
-	@echo "  make simular   - Compilar y ejecutar simulación"
-	@echo "  make ver       - Abrir GTKWave para ver formas de onda"
-	@echo "  make clean     - Limpiar archivos generados"
-
-.PHONY: all simular compilar ejecutar ver clean help
+clear:
+	rm *.vcd   # Elimina los .vcd cada vez que se genera uno nuevo
+	rm a.out   # Elimina el a.out cada vez que se genera uno nuevo
+	rm cpu_synth.v   #Elimina el verilog que se genera al ejecutar Yosys 

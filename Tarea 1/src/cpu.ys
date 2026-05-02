@@ -1,0 +1,26 @@
+# Carga el diseño:
+read_verilog cpu.v
+
+# Establece el modulo de mayor jerarquía:
+hierarchy -check -top cpu
+
+# Comandos para convertir a muxes, optimizar y demás:
+proc; opt; fsm; opt; memory; opt
+
+# Mapea a compuertas default de yosys:
+techmap; opt
+
+# Mapea a FF de la librería cargada
+dfflibmap -liberty ./cmos_cells.lib
+
+# Mapea al resto de compuertas de la librería:
+abc -liberty ./cmos_cells.lib
+
+# Abre una ventana para ver el circuito:
+show
+
+# Elimina lógica no utilizada:
+clean
+
+# Escribe y devuelve el código estructural:
+write_verilog cpu_synth.v

@@ -126,10 +126,12 @@ always @(*) begin
       reg_opcode_next = opcode;
       reg_ab_select_next = ab_select;
       reg_op_addr_next = op_addr;
-      prog_addr_next = prog_addr + 1;    //Incrementa la instrucción desde aquí.
+
+      //prog_addr_next = prog_addr + 1;  //Incrementa el contador de intrucciones
 
       case (opcode)
         load, store: next_state = Instruction;
+	equal_operation: next_state = logic_operation;
         default: next_state = logic_operation;
       endcase
     end
@@ -144,6 +146,7 @@ always @(*) begin
           else 
             next_B = A + B;
             next_state = send_ROM;
+	    prog_addr_next = prog_addr + 1;
         end
 
         sub: begin 
@@ -152,6 +155,7 @@ always @(*) begin
           else 
             next_B = A - B;
             next_state = send_ROM;
+	    prog_addr_next = prog_addr + 1;
         end
 
         and_: begin 
@@ -160,6 +164,7 @@ always @(*) begin
           else
             next_B = A & B;
             next_state = send_ROM;
+	    prog_addr_next = prog_addr + 1; 
         end
 
         or_: begin
@@ -168,6 +173,7 @@ always @(*) begin
           else
             next_B = A | B;
             next_state = send_ROM;
+	    prog_addr_next = prog_addr + 1;
         end
 
         equal_operation: begin 
@@ -188,13 +194,11 @@ always @(*) begin
         mem_control_next = 1;   //Indica que se va hacer lectura.
         next_state = wait_RAM;
       end
-      else if (reg_opcode == store) begin
+      else begin
         mem_control_next = 0;  //Indica que se va hacer escritura.
-        if (reg_ab_select)
-          mem_data_out_next = B;
-        else
-          mem_data_out_next = A;
-          next_state = wait_RAM;
+	mem_data_out_next = (reg_ab_select)? B:A;
+	next_state = wait_RAM;
+
         end 
       end
 
@@ -202,36 +206,28 @@ always @(*) begin
       //Estado 5 = Esperar el acceso a la RAM.
       wait_RAM: begin
         request_ram_next = 1;
-        mem_control_next = mem_control;
-        mem_addr_next = mem_addr;
-
-        if (reg_opcode == load) begin
-          next_state = load_register;
+            if (reg_opcode == load) next_state = load_register;
+            else begin
+                next_state = send_ROM;
+                prog_addr_next = prog_addr + 1;
+            end
         end
-        else if (reg_opcode == store) begin
-          next_state = send_ROM;
-        end
-      end
 
 
       //Estado 6 = Cargar el dato en la RAM.
       load_register: begin 
-        if (reg_ab_select)begin
-          next_A = mem_data_in;
+        if (reg_ab_select) next_B = mem_data_in;
+          else next_A = mem_data_in;
+	  next_state = send_ROM;
+	  prog_addr_next = prog_addr + 1;
         end
-        else begin
-          next_B = mem_data_in;
-        end
-        next_state = send_ROM;
-      end
-
+        
 
         //Estado = Fin del programa.
         End: begin
-          next_state = End;
-          equal_next = (A == B);
-          request_rom_next = 0;
-          request_ram_next = 0;
+          next_state = End; //Mantiene el programa en el estado que termina todo
+	  //request_rom = 0;
+	  //request_ram = 0; 
         end
         default: next_state = send_ROM;
     endcase
