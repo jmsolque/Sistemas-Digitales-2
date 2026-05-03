@@ -14,7 +14,7 @@ module ram (/*AUTOARG*/
     localparam write = 0;
     localparam read = 1;
 
-    reg [7:0] memory [0:31];  //Declaración del arreglo 
+    reg [7:0] memory [0:31];  //Declaración del arreglo, utilizo 32 bits  
     integer i;
 
 

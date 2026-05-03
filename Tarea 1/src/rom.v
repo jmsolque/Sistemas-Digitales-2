@@ -53,21 +53,13 @@ module rom (/*AUTOARG*/
   end
 
 
-  //always @(*) begin
-	  //if (request_rom && reset && prog_addr < 16) begin
-		//data = rom_memory[prog_addr];
-	  //end
-          //else begin
-	     //data = 13'b0;
-	  //end
-  //end
+
   
   always @(posedge clock) begin
-    if (!reset) begin // O 'rst' según tu nombre de señal
+    if (!reset) begin // Reset activo en bajo, lo que quiere decir que cuando es 0 se reinicia todo
         data <= 13'b0;
     end else if (request_rom) begin
-        // Verificamos que no exceda el tamaño del arreglo
-        if (prog_addr < 20) 
+        if (prog_addr < 20)     // Se verifica que no exceda el tamano correspondiente 
             data <= rom_memory[prog_addr];
         else
             data <= 13'b0;

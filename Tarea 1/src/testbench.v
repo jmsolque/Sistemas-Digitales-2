@@ -23,8 +23,8 @@ module cpu_tb;
     wire [11:0] prog_addr;
 
     initial begin 
-        $dumpfile("resultados.vcd");
-        $dumpvars(0, cpu_tb);
+        $dumpfile("resultados.vcd");  // Nombre del archivo generado 
+        $dumpvars(0, cpu_tb);  
     end
 
     // Instancia de ROM

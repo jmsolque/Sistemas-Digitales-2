@@ -22,15 +22,14 @@ output reg equal, request_rom, request_ram;
 output reg [7:0]mem_data_out;
 
 //States
-localparam send_ROM = 4'b0000;
-localparam wait_ROM = 4'b0001;
-localparam read_ROM = 4'b0010;
-localparam logic_operation = 4'b0011;
-localparam Instruction = 4'b0100;
-localparam wait_RAM = 4'b0101;
-localparam load_register = 4'b0110;
-localparam End =4'b0111;
-// 4'b1000;
+localparam send_ROM = 3'b000;
+localparam wait_ROM = 3'b001;
+localparam read_ROM = 3'b010;
+localparam logic_operation = 3'b011;
+localparam Instruction = 3'b100;
+localparam wait_RAM = 3'b101;
+localparam load_register = 3'b110;
+localparam End =3'b111;
 
 //Operations
 localparam store = 4'b0100;
@@ -130,8 +129,8 @@ always @(*) begin
       //prog_addr_next = prog_addr + 1;  //Incrementa el contador de intrucciones
 
       case (opcode)
-        load, store: next_state = Instruction;
-	equal_operation: next_state = logic_operation;
+        load, store: next_state = Instruction;            // En el caso de load o store, el proximo estado es Instruction
+	equal_operation: next_state = logic_operation;    // Para el resto el procimo estado es logic_operation
         default: next_state = logic_operation;
       endcase
     end
@@ -142,7 +141,7 @@ always @(*) begin
       case (reg_opcode)
         add: begin
           if (reg_ab_select) 
-            next_A = A + B;
+            next_A = A + B;     // Operacion de suma 
           else 
             next_B = A + B;
             next_state = send_ROM;
@@ -151,7 +150,7 @@ always @(*) begin
 
         sub: begin 
           if (reg_ab_select) 
-            next_A = A - B;
+            next_A = A - B;     // Operacion de resta 
           else 
             next_B = A - B;
             next_state = send_ROM;
@@ -160,7 +159,7 @@ always @(*) begin
 
         and_: begin 
           if (reg_ab_select)
-            next_A = A & B;
+            next_A = A & B;   // Operacion AND logica
           else
             next_B = A & B;
             next_state = send_ROM;
@@ -169,25 +168,25 @@ always @(*) begin
 
         or_: begin
           if (reg_ab_select)
-            next_A = A | B;
+            next_A = A | B;     // Operacion OR logica 
           else
             next_B = A | B;
             next_state = send_ROM;
 	    prog_addr_next = prog_addr + 1;
         end
 
-        equal_operation: begin 
-          equal_next = (A == B);
+        equal_operation: begin  
+          equal_next = (A == B);   // Condicion Equal para terminar el programa 
           next_state = End;
         end
-        default: next_state = send_ROM;
+        default: next_state = send_ROM;   // Si no es Equal, se devuelve a enviarle una solicitud a la ROM 
       endcase
     end
 
 
     //Estado 4 = Acceso a la memoria RAM.
     Instruction: begin
-      request_ram_next = 1;
+      request_ram_next = 1;    // Solicitud a la memeoria RAM 
       mem_addr_next = {4'b0, reg_op_addr};
 
       if (reg_opcode == load) begin
@@ -206,7 +205,7 @@ always @(*) begin
       //Estado 5 = Esperar el acceso a la RAM.
       wait_RAM: begin
         request_ram_next = 1;
-            if (reg_opcode == load) next_state = load_register;
+            if (reg_opcode == load) next_state = load_register;   // Si el OPCODE es load, si entra a la memoria 
             else begin
                 next_state = send_ROM;
                 prog_addr_next = prog_addr + 1;
@@ -216,16 +215,16 @@ always @(*) begin
 
       //Estado 6 = Cargar el dato en la RAM.
       load_register: begin 
-        if (reg_ab_select) next_B = mem_data_in;
-          else next_A = mem_data_in;
-	  next_state = send_ROM;
-	  prog_addr_next = prog_addr + 1;
-        end
+        if (reg_ab_select) next_B = mem_data_in;  // Aqui se obtiene el valor que se lee de la RAM y entra al CPU 
+          else next_A = mem_data_in;              // Si es B cae en la condicion de arriba, pero si es A cae en el else 
+	  next_state = send_ROM;               
+	  prog_addr_next = prog_addr + 1;   // Se aumenta el contador de intrucciones ya que temrino la instruccion actual 
+        end 
         
 
-        //Estado = Fin del programa.
-        End: begin
-          next_state = End; //Mantiene el programa en el estado que termina todo
+       //Estado = Fin del programa.
+       End: begin
+          next_state = End; // Mantiene el programa en el estado que termina todo
 	  //request_rom = 0;
 	  //request_ram = 0; 
         end
